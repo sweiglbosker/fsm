@@ -22,11 +22,11 @@ release: $(TARGET)
 
 $(TARGET): $(OBJ)
 	mkdir $(BINDIR)
-ifeq ($(suffix $(TARGET)), .a)
-	ar -rcs $@ *.o
-else
-	$(CC) -o $@ $(LDFLAGS) $^
-endif
+        ifeq ($(suffix $(TARGET)), .a)
+	        ar -rcs $@ *.o
+        else
+	        $(CC) -o $@ $(LDFLAGS) $^
+        endif
 
 clean:
 	rm -rf bin/*
