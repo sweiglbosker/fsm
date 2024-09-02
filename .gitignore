@@ -1,0 +1,6 @@
+compile_flags.txt
+bin
+*.o
+*.a
+bin/*.o
+bin/*/a
