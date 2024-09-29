@@ -1,7 +1,7 @@
 include config.mk
 
 SRC:=$(wildcard $(SRCDIR)/*.c)
-OBJ:=$(wildcard $(BINDIR)/*.o)
+OBJ:=$(SRC:$(SRCDIR)/%.c=$(BINDIR)/%.o)
 
 ifeq ($(suffix $(TARGET)), .a)
 	CFLAGS+=-c
@@ -11,19 +11,25 @@ ifeq ($(suffix $(TARGET)), .so)
 	LDFLAGS+=-shared
 endif
 
+default: debug
+
 debug: CFLAGS+=$(DEBUGFLAGS)
 debug: $(TARGET)
 
 release: CFLAGS+=$(RELEASEFLAGS)
 release: $(TARGET)
 
-%.o: %.c
-	$(CC) -CFLAGS $^
+$(BINDIR)/%.o: $(SRCDIR)/%.c
+	echo hello
+	$(CC) -o $@ $(CFLAGS) $^
 
-$(TARGET): $(OBJ)
-	mkdir $(BINDIR)
+$(BINDIR):
+	mkdir -p $(BINDIR)
+
+$(TARGET): $(OBJ) $(BINDIR)
+	echo $(OBJ)
         ifeq ($(suffix $(TARGET)), .a)
-	        ar -rcs $@ *.o
+	        ar -rcs $@ $(OBJ)
         else
 	        $(CC) -o $@ $(LDFLAGS) $^
         endif
@@ -31,5 +37,4 @@ $(TARGET): $(OBJ)
 clean:
 	rm -rf bin/*
 
-
-.PHONY=debug release clean
+.PHONY=default debug release clean
