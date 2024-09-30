@@ -116,7 +116,8 @@ int nfa_add_states(struct nfa *nfa, int n)
 	return old_n_states;
 }
 
-int nfa_table_grow(struct nfa *nfa, unsigned int n) {
+int nfa_table_grow(struct nfa *nfa, unsigned int n) 
+{
 	if (n <= 0)
 		return 0;
 
@@ -129,7 +130,8 @@ int nfa_table_grow(struct nfa *nfa, unsigned int n) {
 	return new_state;
 }
 
-void nfa_table_shift(struct nfa *nfa, unsigned int n) {
+void nfa_table_shift(struct nfa *nfa, unsigned int n) 
+{
 	if (n >= nfa->n_states) {
 		fprintf(stderr, "nfa_table_shift(): shifing transition table out of buffer\n");
 		// maybe just zero transition table here?
@@ -192,50 +194,6 @@ void state_list_free(struct state_list *sl)
 		free(sl);
 		sl = next;
 	}
-}
-
-struct nfa *nfa_concat(struct nfa *a, struct nfa *b)
-{
-	struct nfa *c = b;
-
-	nfa_table_grow(c, a->n_states);
-	nfa_table_shift(c, a->n_states);
-	nfa_table_fill(c, a);
-
-	nfa_add_transition(c, a->accepting_state, c->initial_state, INPUT_EPSILON); // error here
-
-	c->initial_state = a->initial_state;
-
-	return b;
-}
-
-struct nfa *nfa_union(struct nfa *a, struct nfa *b)
-{
-	int initial_state = 0;
-	int accepting_state = 1;
-
-	struct nfa *c = b;
-
-	nfa_table_grow(c, a->n_states + 2);
-	nfa_table_shift(c, a->n_states);
-	nfa_table_fill(c, a);
-	nfa_table_shift(c, 2);
-
-	/* our initial and accepting states don't have a transition table yet */
-	nfa_table_alloc(c, initial_state);
-	nfa_table_alloc(c, accepting_state);
-	
-	nfa_add_transition(c, initial_state, c->initial_state, INPUT_EPSILON);
-	nfa_add_transition(c, initial_state, a->initial_state + 2, INPUT_EPSILON);
-
-	nfa_add_transition(c, c->accepting_state, accepting_state, INPUT_EPSILON);
-	nfa_add_transition(c, a->accepting_state + 2, accepting_state, INPUT_EPSILON);
-
-	c->accepting_state = accepting_state;
-
-	c->initial_state = initial_state;
-
-	return c;
 }
 
 void state_list_print(struct state_list *sl)

@@ -40,12 +40,19 @@ void nfa_table_free_state(struct nfa *nfa, int state);
 void nfa_table_fill(struct nfa *dst, struct nfa *src);
 /* warning: nfa_table_grow does not allocate transition table for the new states, mainly for internal use */
 int nfa_table_grow(struct nfa *nfa, unsigned int n);
+
 void nfa_table_shift(struct nfa *nfa, unsigned int n);
-/* concatenate two nfa fragments into a single fragment */
-struct nfa *nfa_concat(struct nfa *a, struct nfa *b);
-struct nfa *nfa_union(struct nfa *a, struct nfa *b);
+
+struct nfa *nfa_concat(struct nfa *a, struct nfa *b); /* concatenate two nfa fragments into a single fragment */
+
+struct nfa *nfa_union(struct nfa *a, struct nfa *b); /* a|b */
+
+struct nfa *nfa_star(struct nfa *nfa); /* zero or more occurence of nfa */
+
+struct nfa *nfa_plus(struct nfa *nfa); /* one or more occurence of nfa */
+
+struct nfa *nfa_question(struct nfa *nfa); /* zero or one occurence of nfa */
 
 void nfa_print(struct nfa *nfa);
-
 
 #endif /* _NFA_H */
